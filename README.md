@@ -2,7 +2,7 @@
 
 
 ### Deployment Test
-- [SandBoxlab27](https://tdlxm.csb.app/) 
+- [SandBoxlab27](https://enoo7.csb.app/) 
 - [pull request 3 ](https://github.com/MohammadAljadayh/RESTy/pull/3).
 - [pull request 4 ](https://github.com/MohammadAljadayh/RESTy/pull/3).
 - [Main Repo link](https://github.com/MohammadAljadayh/RESTy) 
