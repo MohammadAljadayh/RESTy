@@ -1,7 +1,7 @@
 import React from 'react';
 
 import './app.scss';
-import { useState } from 'react';
+import { useState,useEffect} from 'react';
 import axios from 'axios'
 // Let's talk about using index.js and some other name in the component folder
 // There's pros and cons for each way of doing this ...
@@ -12,24 +12,42 @@ import Results from './components/results';
 
 
 export default function app(props) {
-const [state, setState] = useState({data: null,requestParams: {}})
-  
-const callApi = async(requestParams) => {
+  const [data, setData] = useState(null);  
+  const [requestParams, setRequestParams] = useState({});
+  const [requestBody, setRequestBody] = useState({});
+
+  useEffect(() => {
+    async function requestData() {
+
+      if (requestParams.url) {
+        const response = await axios({
+          method: requestParams.method,
+          url: requestParams.url,
+          data: requestBody,
+        });
+        setData(response);
+      }
+    }
+    requestData();
+  }, [requestParams]);
+
+
+
+const callApi = (data) => {
   // mock output
-  const dataurl = await axios.get(requestParams.url);
-  const data = {
-   results: [dataurl.data.results]  
-  };
-  setState({data, requestParams});
+  if (data.url !== '') {
+    setRequestParams(data);
+    setRequestBody(data);
+  }
 }
 
 return (
   <React.Fragment>
   <Header />
-  <div>Request Method: {state.requestParams.method}</div>
-  <div>URL: {state.requestParams.url}</div>
+  <div>Request Method: {requestParams.method}</div>
+  <div>URL: {requestParams.url}</div>
   <Form handleApiCall={callApi} />
-  <Results data={state.data} />
+  <Results data={data} />
   <Footer />
 </React.Fragment>
   );

@@ -60,7 +60,7 @@ function Form(props) {
   useEffect(
     () => {
       document.getElementById('get').style.background=colors.Sea;
-      document.getElementById('post').style.background=colors.Sea;
+
       document.getElementById('put').style.background=colors.Sea;
       document.getElementById('delete').style.background=colors.Sea;
       let v = document.getElementById(`${method}`);
