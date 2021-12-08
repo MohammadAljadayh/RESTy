@@ -1,58 +1,65 @@
 import React from 'react';
 
 import './app.scss';
-import { useState,useEffect} from 'react';
+import { useState, useEffect, useReducer } from 'react';
 import axios from 'axios'
-// Let's talk about using index.js and some other name in the component folder
-// There's pros and cons for each way of doing this ...
+
 import Header from './components/header';
 import Footer from './components/footer';
 import Form from './components/form';
 import Results from './components/results';
 
+import historyReducer, { addHistory, emptyHistory } from './components/reducer/reducer';
+import History from './components/history/history';
 
-export default function app(props) {
-  const [data, setData] = useState(null);  
+const initialState = {
+  history: []
+}
+
+function App(props) {
+
   const [requestParams, setRequestParams] = useState({});
-  const [requestBody, setRequestBody] = useState({});
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [state, dispatch] = useReducer(historyReducer, initialState)
 
-  useEffect(() => {
-    async function requestData() {
+  const callApi = async (requestParams) => {
 
-      if (requestParams.url) {
-        const response = await axios({
-          method: requestParams.method,
-          url: requestParams.url,
-          data: requestBody,
-        });
-        setData(response);
-      }
+    let url = requestParams.url;
+    let method = requestParams.method;
+    let body = requestParams.body;
+    let results = requestParams.results
+
+
+    if (method == 'get' || method == 'delete') {
+      await axios[method](url).then(result => {
+        setData([result.data]);
+        dispatch(addHistory(requestParams, result.data));
+        setLoading(true);
+      })
+    } else {
+      await axios[method](url, body).then(result => {
+        setData([...data, result.data]);
+        dispatch(addHistory(requestParams, result.data));
+        setLoading(true);
+      })
     }
-    requestData();
-  }, [requestParams]);
-
-
-
-const callApi = (data) => {
-  // mock output
-  if (data.url !== '') {
-    setRequestParams(data);
-    setRequestBody(data);
   }
-}
 
-return (
-  <React.Fragment>
-  <Header />
-  <div>Request Method: {requestParams.method}</div>
-  <div>URL: {requestParams.url}</div>
-  <Form handleApiCall={callApi} />
-  <Results data={data} />
-  <Footer />
-</React.Fragment>
+  
+
+  return (
+    <React.Fragment>
+      <Header />
+      {/* <div>Request Method: {requestParams.method}</div> */}
+      {/* <div>URL: {requestParams.url}</div> */}
+      {state.history.length ? <History history={state.history} /> : null}
+      <Form handleApiCall={callApi} />
+      <Results data={data} />
+      <Footer />
+    </React.Fragment>
   );
+
 }
 
-
-
-
+export default App;
