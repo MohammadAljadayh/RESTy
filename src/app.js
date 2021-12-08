@@ -51,8 +51,7 @@ function App(props) {
   return (
     <React.Fragment>
       <Header />
-      {/* <div>Request Method: {requestParams.method}</div> */}
-      {/* <div>URL: {requestParams.url}</div> */}
+  
       {state.history.length ? <History history={state.history} /> : null}
       <Form handleApiCall={callApi} />
       <Results data={data} />
